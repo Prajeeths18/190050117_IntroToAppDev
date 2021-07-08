@@ -10,3 +10,5 @@
 
 - Write a good parsing and computing function to handle any type of expression, and make the app more consistent.
 - Support more kind of operations
+
+![alt text]("/home/prajeeth/IntroToAppDevelopment/week1/pic.jpeg")
