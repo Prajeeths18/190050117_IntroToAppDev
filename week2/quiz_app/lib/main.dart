@@ -108,7 +108,6 @@ class _QuizAppState extends State<QuizApp> {
                   style: ElevatedButton.styleFrom(primary: Colors.green),
                   child: Text("True"),
                   onPressed: () {
-                    print("Clicked True...");
                     setState(() {
                       bool correct = quiz.questions[questionNo].evaluate(true);
                       if (correct) {
@@ -138,7 +137,6 @@ class _QuizAppState extends State<QuizApp> {
                   style: ElevatedButton.styleFrom(primary: Colors.red),
                   child: Text("False"),
                   onPressed: () {
-                    print("Clicked False...");
                     setState(() {
                       bool correct = quiz.questions[questionNo].evaluate(false);
                       if (correct) {
