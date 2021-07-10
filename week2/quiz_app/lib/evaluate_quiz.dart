@@ -15,10 +15,8 @@ class EvaluateQuiz extends StatefulWidget {
 class _EvaluateQuizState extends State<EvaluateQuiz> {
   @override
   Widget build(BuildContext context) {
-    print("I am called...");
     return Row(
       children: widget.isCorrect.map((e) {
-        print(e);
         if (e == 1) {
           return Expanded(
               child: Icon(

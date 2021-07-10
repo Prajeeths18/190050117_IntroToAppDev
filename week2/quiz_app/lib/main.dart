@@ -58,7 +58,6 @@ class _QuizAppState extends State<QuizApp> {
   late List<int> isCorrect;
   late Widget quizEvalutation;
   void initState() {
-    print("initState");
     totalQuestions = questions.length;
     isCorrect = List.filled(totalQuestions, -1);
     quizEvalutation = EvaluateQuiz(isCorrect: isCorrect);
@@ -69,21 +68,16 @@ class _QuizAppState extends State<QuizApp> {
   int questionNo = 0;
 
   void evaluateQuestion(bool value) {
-    print("Clicked $value...");
     setState(() {
-      print("inside setstate");
       if (questionNo < totalQuestions) {
-        print(questionNo);
         isCorrect[questionNo] =
             quiz.questions[questionNo].evaluate(value) ? 1 : 0;
       }
       questionNo++;
     });
     if (questionNo == totalQuestions) {
-      print("comes here");
       Navigator.pushNamed(context, "/finish").then((_) {
         setState(() {
-          print("called here");
           questionNo = 0;
           isCorrect.fillRange(0, totalQuestions, -1);
         });
@@ -93,8 +87,6 @@ class _QuizAppState extends State<QuizApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("Main page buiding again");
-    print(isCorrect);
     return Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(

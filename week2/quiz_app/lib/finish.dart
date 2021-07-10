@@ -11,7 +11,6 @@ class FinishedQuiz extends StatefulWidget {
 class _FinishedQuizState extends State<FinishedQuiz> {
   @override
   Widget build(BuildContext context) {
-    print("finish page buiding....");
     return Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
@@ -40,7 +39,6 @@ class _FinishedQuizState extends State<FinishedQuiz> {
                   ),
                   child: Text("Start over"),
                   onPressed: () {
-                    print("Back button pressed");
                     Navigator.pop(context);
                   },
                 ),
