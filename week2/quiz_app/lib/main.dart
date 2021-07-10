@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import 'finish.dart';
+import "start_quiz.dart";
 import "question.dart";
 import "quiz.dart";
+import "evaluate_quiz.dart";
+// import 'package:http/http.dart' as http;
+// import 'package:opentdb_client/opentdb_client.dart';
 
 void main() {
-  runApp(MaterialApp(home: QuizApp()));
+  runApp(MaterialApp(
+    initialRoute: "/start",
+    routes: {
+      "/": (context) => QuizApp(),
+      "/start": (context) => startQuiz(),
+      "/finish": (context) => FinishedQuiz()
+    },
+  ));
+}
+
+int min(int a, int b) {
+  return (a <= b ? a : b);
 }
 
 class QuizApp extends StatefulWidget {
@@ -14,54 +30,27 @@ class QuizApp extends StatefulWidget {
 }
 
 class _QuizAppState extends State<QuizApp> {
-  Widget evaluateQuiz(List<int> isCorrect) {
-    return Row(
-      children: isCorrect.map((e) {
-        if (e == 1) {
-          return Expanded(
-              child: Icon(
-            Icons.check,
-            color: Colors.green,
-            size: 35,
-          ));
-        } else if (e == 0) {
-          return Expanded(
-            child: Icon(
-              Icons.close,
-              color: Colors.red,
-              size: 35,
-            ),
-          );
-        } else {
-          return Expanded(child: Container());
-        }
-      }).toList(),
-    );
-  }
-
   List<Question> questions = [
     Question(
-        question: "Blue eyes are newer to the human race than pottery",
-        answer: true),
-    Question(
-        question: "50 Cent and Charlie Chaplin were alive at the same time",
-        answer: true),
-    Question(question: "Trees existed before sharks", answer: false),
-    Question(question: "Michigan is larger than Great Britain", answer: true),
-    Question(
-        question: "Cumulus clouds weigh anywhere from 15 to 30 pounds",
-        answer: false),
-    Question(question: "There are 14 bones in a human foot", answer: false),
-    Question(question: "Matches were invented before lighters", answer: false),
-    Question(
-        question:
-            "The population of California is larger than the entire population of Canada.",
-        answer: true),
-    Question(
-        question: "The world's population tripled in the last 50 years.",
+        question: "Hot and cold water sound the same when you pour them.",
         answer: false),
     Question(
-        question: "Two 12-inch pizzas have more pizza than a 17-inch pizza.",
+        question: "More people are killed each year by cows than by sharks.",
+        answer: true),
+    Question(
+        question: "An endangered species is at risk of extinction.",
+        answer: true),
+    Question(question: "Crude oil is a fossil fuel.", answer: true),
+    Question(question: "The ocean sometimes stands still.", answer: false),
+    Question(question: "All matter has mass and density.", answer: true),
+    Question(question: "Skin serves no real purpose.", answer: false),
+    Question(
+        question: "All chemical reactions can be reversed.", answer: false),
+    Question(
+        question: "When horses run, all four feet leave the ground.",
+        answer: true),
+    Question(
+        question: "Most human babies are born exactly on their due dates.",
         answer: false)
   ];
   late Quiz quiz;
@@ -71,12 +60,30 @@ class _QuizAppState extends State<QuizApp> {
   void initState() {
     totalQuestions = questions.length;
     isCorrect = List.filled(totalQuestions, -1);
-    quizEvalutation = evaluateQuiz(isCorrect);
+    quizEvalutation = EvaluateQuiz(isCorrect: isCorrect);
     quiz = Quiz(questions: questions);
     super.initState();
   }
 
   int questionNo = 0;
+
+  void evaluateQuestion(bool value) {
+    setState(() {
+      if (questionNo < totalQuestions) {
+        isCorrect[questionNo] =
+            quiz.questions[questionNo].evaluate(value) ? 1 : 0;
+      }
+      questionNo++;
+    });
+    if (questionNo == totalQuestions) {
+      Navigator.pushNamed(context, "/finish").then((_) {
+        setState(() {
+          questionNo = 0;
+          isCorrect.fillRange(0, totalQuestions, -1);
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +103,8 @@ class _QuizAppState extends State<QuizApp> {
                   child: Center(
                     child: Container(
                       margin: EdgeInsets.all(10.0),
-                      child: Text("${quiz.questions[questionNo].question}",
+                      child: Text(
+                          "${questionNo + 1}\n\n${quiz.questions[min(questionNo, totalQuestions - 1)].question}",
                           textAlign: TextAlign.center,
                           style:
                               TextStyle(fontSize: 30.0, color: Colors.white)),
@@ -107,25 +115,7 @@ class _QuizAppState extends State<QuizApp> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: Colors.green),
                   child: Text("True"),
-                  onPressed: () {
-                    setState(() {
-                      bool correct = quiz.questions[questionNo].evaluate(true);
-                      if (correct) {
-                        isCorrect[questionNo] = 1;
-                      } else {
-                        isCorrect[questionNo] = 0;
-                      }
-                      if (questionNo == totalQuestions - 1) {
-                        isCorrect.fillRange(0, totalQuestions, -1);
-                      }
-                      quizEvalutation = evaluateQuiz(isCorrect);
-                      if (questionNo < totalQuestions - 1) {
-                        questionNo++;
-                      } else {
-                        questionNo = 0;
-                      }
-                    });
-                  },
+                  onPressed: () => evaluateQuestion(true),
                 ),
               ),
               SizedBox(
@@ -136,29 +126,10 @@ class _QuizAppState extends State<QuizApp> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: Colors.red),
                   child: Text("False"),
-                  onPressed: () {
-                    setState(() {
-                      bool correct = quiz.questions[questionNo].evaluate(false);
-                      if (correct) {
-                        isCorrect[questionNo] = 1;
-                      } else {
-                        isCorrect[questionNo] = 0;
-                      }
-                      if (questionNo == totalQuestions - 1) {
-                        isCorrect.fillRange(0, totalQuestions, -1);
-                      }
-                      quizEvalutation = evaluateQuiz(isCorrect);
-                      if (questionNo < totalQuestions - 1) {
-                        questionNo++;
-                      } else {
-                        questionNo = 0;
-                        isCorrect.fillRange(0, totalQuestions, -1);
-                      }
-                    });
-                  },
+                  onPressed: () => evaluateQuestion(false),
                 ),
               ),
-              Expanded(flex: 1, child: quizEvalutation)
+              Expanded(flex: 1, child: EvaluateQuiz(isCorrect: isCorrect))
             ],
           ),
         ));
